@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/threads.dir/threads.c.o CMakeFiles/threads.dir/__/deps/tinycthread.c.o CMakeFiles/threads.dir/__/deps/glad_gl.c.o  -o threads  -Wl,-rpath,/home/ccc/simulation/libs/glfw-3.3.2/src ../src/libglfw.so.3.3 -lm -lpthread -lrt 
