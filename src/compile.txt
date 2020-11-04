@@ -1,0 +1,1 @@
+gcc main.c -I../libs/glfw-3.3.2/deps -I../libs/glfw-3.3.2/include/ -L../libs/glfw-3.3.2/src -lglfw -lm ../libs/glfw-3.3.2/deps/glad_gl.c -Wl,-rpath=./

@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/clipboard.dir/clipboard.c.o CMakeFiles/clipboard.dir/__/deps/getopt.c.o CMakeFiles/clipboard.dir/__/deps/glad_gl.c.o  -o clipboard  -Wl,-rpath,/home/ccc/simulation/libs/glfw-3.3.2/src ../src/libglfw.so.3.3 -lm 
