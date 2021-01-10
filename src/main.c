@@ -190,16 +190,16 @@ int main(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         mat4x4_identity(m);
-        //mat4x4_rotate_Z(m, m, (float) glfwGetTime());
+        //mat4x4_rotate_Y(m, m, (float) glfwGetTime());
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         
-        vec3 eye = {0,2,-1.5f};
+        vec3 eye = {0,1,1};
         vec3 center = {0,0,0};
         vec3 up = {0,1,0};
 
         mat4x4_look_at(v,eye,center,up);
-        ratio = 1.0f/ratio;
-        float fov_y = 30.0f;
+        //ratio = 1.0f/ratio;
+        float fov_y = 14.0f;
         float near = 0.1f;
         float far = 20.0f;
         mat4x4_perspective(p, ratio, fov_y, near, far);
