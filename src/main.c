@@ -2,8 +2,8 @@
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <linmath.h>
 
+#include <linmath.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -77,6 +77,7 @@ int main(int argc, char* argv[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     window = glfwCreateWindow(640, 480, "ECSE458 CICMR Simulation", NULL, NULL);
+
     if (!window)
     {
         glfwTerminate();
@@ -110,6 +111,7 @@ int main(int argc, char* argv[])
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
+
     glUseProgram(program);
 
     mvp_location = glGetUniformLocation(program, "MVP");
