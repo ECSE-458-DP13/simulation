@@ -2,11 +2,15 @@
 #include <glad/gl.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
-#include "linmath.h"
+#include <linmath.h>
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "shaders.h"
+#include "camera.h"
+#include "geometry.h"
+#include "physics.h"
 
 static const struct
 {
@@ -23,13 +27,16 @@ static const char* vertex_shader_text =
 "#version 110\n"
 "uniform mat4 MVP;\n"
 "attribute vec3 vCol;\n"
-"attribute vec2 vPos;\n"
+"attribute vec3 vPos;\n"
 "varying vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
-"    color = vCol;\n"
+"    gl_Position = MVP * vec4(vPos, 1.0);\n"
+"    color = vec3(1.0,1.0,0.0);\n"
 "}\n";
+//vec2 vPos
+//gl_Position 0.0,1.0
+//color = vCol;
 
 static const char* fragment_shader_text =
 "#version 110\n"
@@ -50,11 +57,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
+static GLuint mesh;
+static GLuint mesh_vbo[2];
+
 int main(int argc, char* argv[])
 {
     printf("ECSE458 CICMR Simulation\n");
     GLFWwindow* window;
-    GLuint vertex_buffer, vertex_shader, fragment_shader, program;
+    GLuint vertex_buffer, normal_buffer, element_buffer, vertex_shader, fragment_shader, program;
     GLint mvp_location, vpos_location, vcol_location;
 
     glfwSetErrorCallback(error_callback);
@@ -62,10 +72,11 @@ int main(int argc, char* argv[])
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "ECSE458 CICMR Simulation", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -78,11 +89,14 @@ int main(int argc, char* argv[])
     gladLoadGL(glfwGetProcAddress);
     glfwSwapInterval(1);
 
-    // NOTE: OpenGL error checks have been omitted for brevity
+    //glClearColor(0.25f,0.5f,0.75f,1.0f);
+    /*glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);*/
 
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // NOTE: OpenGL error checks have been omitted for brevity
 
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
@@ -96,17 +110,64 @@ int main(int argc, char* argv[])
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
+    glUseProgram(program);
 
     mvp_location = glGetUniformLocation(program, "MVP");
-    vpos_location = glGetAttribLocation(program, "vPos");
+    //vpos_location = glGetAttribLocation(program, "vPos");
     vcol_location = glGetAttribLocation(program, "vCol");
 
+        GLuint attrloc;
+
+        glGenVertexArrays(1, &mesh);
+        glGenBuffers(2, mesh_vbo);
+        glBindVertexArray(mesh);
+        /* Prepare the data for drawing through a buffer inidices */
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
+
+        /* Prepare the attributes for rendering */
+        attrloc = glGetAttribLocation(program, "vPos");
+        glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(attrloc);
+        glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+glBindBuffer(GL_ARRAY_BUFFER,0);
+        /*attrloc = glGetAttribLocation(program, "z");
+        glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[2]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * MAP_NUM_TOTAL_VERTICES, &map_vertices[2][0], GL_STATIC_DRAW);
+        glEnableVertexAttribArray(attrloc);
+        glVertexAttribPointer(attrloc, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
+        attrloc = glGetAttribLocation(program, "y");
+        glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[1]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * MAP_NUM_TOTAL_VERTICES, &map_vertices[1][0], GL_DYNAMIC_DRAW);
+        glEnableVertexAttribArray(attrloc);
+        glVertexAttribPointer(attrloc, 1, GL_FLOAT, GL_FALSE, 0, 0);*/
+
+    /*glGenBuffers(1, &vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(vpos_location);
-    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
-                          sizeof(vertices[0]), (void*) 0);
-    glEnableVertexAttribArray(vcol_location);
-    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(vertices[0]), (void*) (sizeof(float) * 2));
+    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE,
+                          0, (void*) 0); //sizeof(quad_vertices[0]), 0
+    //glGenBuffers(1, &normal_buffer);
+    //glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(quad_normals), quad_normals, GL_STATIC_DRAW);
+    glGenBuffers(1, &element_buffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangle_elements), triangle_elements, GL_STATIC_DRAW);
+ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
+
+
+
+    //glVertexAttribPointer(vpos_location, 4, GL_FLOAT, GL_FALSE,
+    //                      sizeof(vertices[0]), (void*) 0);
+    //glEnableVertexAttribArray(vcol_location);
+    //glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
+    //                      sizeof(vertices[0]), (void*) (sizeof(float) * 3));
+
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);*/
+//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -118,16 +179,25 @@ int main(int argc, char* argv[])
         ratio = width / (float) height;
 
         glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         mat4x4_identity(m);
-        mat4x4_rotate_Z(m, m, (float) glfwGetTime());
+        //mat4x4_rotate_Z(m, m, (float) glfwGetTime());
         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         mat4x4_mul(mvp, p, m);
 
         glUseProgram(program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
+        //glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+        //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, (void*)0);
+//        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, (void*)0);
+        glDrawElements(GL_LINE_LOOP, 8, GL_UNSIGNED_INT, (void*)0);
+        //glDrawElements(GL_TRIANGLES,4,GL_UNSIGNED_INT,(void*)0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
