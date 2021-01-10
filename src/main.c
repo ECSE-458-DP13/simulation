@@ -123,17 +123,22 @@ int main(int argc, char* argv[])
         glGenVertexArrays(1, &mesh);
         glGenBuffers(2, mesh_vbo);
         glBindVertexArray(mesh);
+        
+
         /* Prepare the data for drawing through a buffer inidices */
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
 
-        /* Prepare the attributes for rendering */
-        attrloc = glGetAttribLocation(program, "vPos");
-        glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(attrloc);
-        glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-glBindBuffer(GL_ARRAY_BUFFER,0);
+        for(int i = 0; i < 1; i++){
+            quad_vertices->x += i;
+            /* Prepare the attributes for rendering */
+            attrloc = glGetAttribLocation(program, "vPos");
+            glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+            glEnableVertexAttribArray(attrloc);
+            glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER,0);
+        }
         /*attrloc = glGetAttribLocation(program, "z");
         glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[2]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * MAP_NUM_TOTAL_VERTICES, &map_vertices[2][0], GL_STATIC_DRAW);
@@ -175,7 +180,7 @@ glBindBuffer(GL_ARRAY_BUFFER,0);
     {
         float ratio;
         int width, height;
-        mat4x4 m, p, mvp;
+        mat4x4 m, v, p, mvp, t;
 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
@@ -186,8 +191,22 @@ glBindBuffer(GL_ARRAY_BUFFER,0);
 
         mat4x4_identity(m);
         //mat4x4_rotate_Z(m, m, (float) glfwGetTime());
-        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        mat4x4_mul(mvp, p, m);
+        //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        
+        vec3 eye = {0,2,-1.5f};
+        vec3 center = {0,0,0};
+        vec3 up = {0,1,0};
+
+        mat4x4_look_at(v,eye,center,up);
+        ratio = 1.0f/ratio;
+        float fov_y = 30.0f;
+        float near = 0.1f;
+        float far = 20.0f;
+        mat4x4_perspective(p, ratio, fov_y, near, far);
+        mat4x4_mul(mvp, v, m);
+        mat4x4_mul(mvp, p, mvp);
+        //t[2][3] = 0.9f;
+        //mat4x4_add(mvp,mvp,t);
 
         glUseProgram(program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
