@@ -1,16 +1,22 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+// Vertex and Vector
+typedef struct 
+{
+    float x, y, z;
+} Vertex, Vector;
+
 // Triangle
 extern struct
 {
-    float x, y, z;
-} triangle_vertices[3];
+    Vertex vertices[3];
+} triangle_vertices;
 
 extern struct
 {
-    float x, y, z;
-} triangle_normals[3];
+    Vector normals[3];
+} triangle_normals;
 
 extern struct
 {
@@ -20,29 +26,47 @@ extern struct
 // Quad
 extern struct
 {
-    float x, y, z;
-} quad_vertices[4];
+    Vertex vertices[4];
+} quad_vertices;
 
 extern struct
 {
-    float x, y, z;
-} quad_normals[4];
+    Vector normals[4];
+} quad_normals;
 
 extern struct
 {
     int i;
 } quad_elements[4];
 
-// Cube
+// Grid
 extern struct
 {
-    float x, y, z;
-} cube_vertices[24];
+    Vertex vertices;
+} *grid_vertices;
 
 extern struct
 {
-    float x, y, z;
-} cube_normals[24];
+    Vector normals;
+} *grid_normals;
+
+extern struct
+{
+    int i;
+} *grid_elements;
+
+void init_grid(int length, int width);
+
+// Cube
+extern struct
+{
+    Vertex vertices[24];
+} cube_vertices;
+
+extern struct
+{
+    Vector normals[24];
+} cube_normals;
 
 extern struct
 {
@@ -52,13 +76,13 @@ extern struct
 // Cylinder
 extern struct
 {
-    float x, y, z;
-} cylinder_vertices[24];
+    Vertex vertices[24];
+} cylinder_vertices;
 
 extern struct
 {
-    float x, y, z;
-} cylinder_normals[24];
+    Vector normals[24];
+} cylinder_normals;
 
 extern struct
 {
@@ -68,13 +92,13 @@ extern struct
 // Sphere
 extern struct
 {
-    float x, y, z;
-} sphere_vertices[24];
+    Vertex vertices[24];
+} sphere_vertices;
 
 extern struct
 {
-    float x, y, z;
-} sphere_normals[24];
+    Vector normals[24];
+} sphere_normals;
 
 extern struct
 {

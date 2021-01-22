@@ -63,6 +63,12 @@ static GLuint mesh_vbo[2];
 int main(int argc, char* argv[])
 {
     printf("ECSE458 CICMR Simulation\n");
+    //printf("%f",grid_vertices[0].vertices.vertices[0]);
+    //printf("%f",grid_vertices[0].vertices.vertices[1]);
+    //printf("%f",grid_vertices[0].vertices.vertices[2]);
+    //printf("%f",grid_vertices[0].vertices.vertices[3]);
+    init_grid(10,10);
+    return 0;
     GLFWwindow* window;
     GLuint vertex_buffer, normal_buffer, element_buffer, vertex_shader, fragment_shader, program;
     GLint mvp_location, vpos_location, vcol_location;
@@ -123,22 +129,50 @@ int main(int argc, char* argv[])
         glGenVertexArrays(1, &mesh);
         glGenBuffers(2, mesh_vbo);
         glBindVertexArray(mesh);
-        
 
         /* Prepare the data for drawing through a buffer inidices */
+        //for(int i = 100; i < 200; i++){
+            //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[i]);
+            //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
+        //}
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangle_elements), triangle_elements, GL_STATIC_DRAW);
 
-        for(int i = 0; i < 1; i++){
-            quad_vertices->x += i;
-            /* Prepare the attributes for rendering */
+        /*for(int i = 0; i < 100; i++){
+            printf("%d\n",i);
+            printf("before x: %f, y: %f, z: %f\n",(quad_vertices[0].x),quad_vertices[0].y,quad_vertices[0].z);
+            printf("before x: %f, y: %f, z: %f\n",(quad_vertices[1].x),quad_vertices[1].y,quad_vertices[1].z);
+            printf("before x: %f, y: %f, z: %f\n",(quad_vertices[2].x),quad_vertices[2].y,quad_vertices[2].z);
+            printf("before x: %f, y: %f, z: %f\n",(quad_vertices[3].x),quad_vertices[3].y,quad_vertices[3].z);
+            quad_vertices[0].z += (float)(i );
+            quad_vertices[0].x += (float)(i );
+            quad_vertices[1].z += (float)(i );
+            quad_vertices[1].x += (float)(i );
+            quad_vertices[2].z += (float)(i );
+            quad_vertices[2].x += (float)(i );
+            quad_vertices[3].z += (float)(i );
+            quad_vertices[3].x += (float)(i );
+            printf("after x: %f, y: %f, z: %f\n",(quad_vertices[0].x),quad_vertices[0].y,quad_vertices[0].z);
+            printf("after x: %f, y: %f, z: %f\n",(quad_vertices[1].x),quad_vertices[1].y,quad_vertices[1].z);
+            printf("after x: %f, y: %f, z: %f\n",(quad_vertices[2].x),quad_vertices[2].y,quad_vertices[2].z);
+            printf("after x: %f, y: %f, z: %f\n",(quad_vertices[3].x),quad_vertices[3].y,quad_vertices[3].z);
+            printf("\n");
+            // Prepare the attributes for rendering
             attrloc = glGetAttribLocation(program, "vPos");
-            glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
+            glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[i]);
             glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
             glEnableVertexAttribArray(attrloc);
             glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindBuffer(GL_ARRAY_BUFFER,0);
-        }
+        }*/
+
+            attrloc = glGetAttribLocation(program, "vPos");
+            glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices.vertices), triangle_vertices.vertices, GL_STATIC_DRAW);
+            glEnableVertexAttribArray(attrloc);
+            glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glBindBuffer(GL_ARRAY_BUFFER,0);
+
         /*attrloc = glGetAttribLocation(program, "z");
         glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[2]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * MAP_NUM_TOTAL_VERTICES, &map_vertices[2][0], GL_STATIC_DRAW);
@@ -192,8 +226,8 @@ int main(int argc, char* argv[])
         mat4x4_identity(m);
         //mat4x4_rotate_Y(m, m, (float) glfwGetTime());
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        
-        vec3 eye = {0,1,1};
+
+        vec3 eye = {0,3,-1};
         vec3 center = {0,0,0};
         vec3 up = {0,1,0};
 
@@ -212,12 +246,12 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
 
         //glDrawArrays(GL_TRIANGLES, 0, 3);
-        
+
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
         //glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
         //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, (void*)0);
 //        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, (void*)0);
-        glDrawElements(GL_LINE_LOOP, 8, GL_UNSIGNED_INT, (void*)0);
+        glDrawElements(GL_LINE_LOOP, 200, GL_UNSIGNED_INT, (void*)0);
         //glDrawElements(GL_TRIANGLES,4,GL_UNSIGNED_INT,(void*)0);
 
         glfwSwapBuffers(window);

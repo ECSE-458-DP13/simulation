@@ -2,25 +2,31 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Vertex and Vector
+typedef struct 
+{
+    float x, y, z;
+} Vertex, Vector;
+
 // Triangle
 struct
 {
-    float x, y, z;
-} triangle_vertices[3] =
+    Vertex vertices[3];
+} triangle_vertices =
 {
-    { -1,-1, 0 },
-    { 1,-1, 0 },
-    { -1, 1, 0 }
+    {{ -1,0, -1 },
+    { 1,0, -1 },
+    { 0, 0, 1 }}
 };
 
 struct
 {
-    float x, y, z;
-} triangle_normals[3] =
+    Vector normals[3];
+} triangle_normals =
 {
-    { 0, 0, 1 },
-    { 0, 0, 1 },
-    { 0, 0, 1 }
+    {{ 0,1, 0 },
+    { 0,1, 0 },
+    { 0, 1, 0 }}
 };
 
 struct
@@ -36,7 +42,7 @@ struct
 // Quad
 struct
 {
-    float x, y, z;
+    Vertex vertices;
 } quad_vertices[4] =
 {
     { -0.5,0, -0.5 },
@@ -47,13 +53,13 @@ struct
 
 struct
 {
-    float x, y, z;
-} quad_normals[4] =
+    Vector normals[4];
+} quad_normals =
 {
-    { 0, 0, 1 },
-    { 0, 0, 1 },
-    { 0, 0, 1 },
-    { 0, 0, 1 }
+    {{ 0, 1, 0 },
+    { 0, 1, 0 },
+    { 0, 1, 0 },
+    { 0, 1, 0 }}
 };
 
 struct
@@ -67,13 +73,53 @@ struct
     { 1 }
 };
 
+// Grid
+struct
+{
+    Vertex vertices[4];
+} *grid_quads;
+
+struct
+{
+    Vector normals[4];
+} *grid_normals;
+
+struct
+{
+    int i[4];
+} *grid_elements;
+
+void init_grid(int length, int width){
+    grid_quads = (Vertex*)malloc(length*width*sizeof(quad_vertices));
+    grid_normals = (Vector*)malloc(length*width);
+    grid_elements = (int*)malloc(length*width);
+    for(int i = 0; i < length*width; i++){
+        //grid_vertices[i].vertices[0].x
+
+        memcpy(grid_quads[i].vertices,quad_vertices,sizeof(quad_vertices));
+        //memcpy(grid_normals[i].normals,quad_normals.normals,4);
+        //grid_vertices[i].vertices = quad_vertices.vertices;
+        //grid_normals[i].normals = quad_normals.normals;
+        //grid_elements[i] = quad_elements;
+        //memcpy(grid_elements,quad_elements,4);
+    }
+
+    for(int i = 0; i < length*width; i++){
+        printf("%d\n",i);
+        printf("%f %f %f\n",grid_quads[i].vertices[0].x,grid_quads[i].vertices[0].y,grid_quads[i].vertices[0].z);
+        printf("%f %f %f\n",grid_quads[i].vertices[1].x,grid_quads[i].vertices[1].y,grid_quads[i].vertices[1].z);
+        printf("%f %f %f\n",grid_quads[i].vertices[2].x,grid_quads[i].vertices[2].y,grid_quads[i].vertices[2].z);
+        printf("%f %f %f\n",grid_quads[i].vertices[3].x,grid_quads[i].vertices[3].y,grid_quads[i].vertices[3].z);
+    }
+}
+
 // Cube
 struct
 {
-    float x, y, z;
-} cube_vertices[24] =
+    Vertex vertices[24];
+} cube_vertices =
 {
-    { -1,-1, 0 },
+    {{ -1,-1, 0 },
     { 1,-1, 0 },
     { -1, 1, 0 },
     { 1, 1, 0 },
@@ -101,15 +147,15 @@ struct
     { 1,-1, 0 },
     { 1,-1, -1 },
     { 1, 1, -1 },
-    { 1, 1, 0 }
+    { 1, 1, 0 }}
 };
 
 struct
 {
-    float x, y, z;
-} cube_normals[24] =
+    Vector normals[24];
+} cube_normals =
 {
-    { 0, 0, 1 },
+    {{ 0, 0, 1 },
     { 0, 0, 1 },
     { 0, 0, 1 },
     { 0, 0, 1 },
@@ -137,7 +183,7 @@ struct
     { -1, 0, 0 },
     { -1, 0, 0 },
     { -1, 0, 0 },
-    { -1, 0, 0 }
+    { -1, 0, 0 }}
 };
 
 struct
@@ -179,22 +225,22 @@ struct
 // Cylinder
 struct
 {
-    float x, y, z;
-} cylinder_vertices[3] =
+    Vertex vertices[3];
+} cylinder_vertices =
 {
-    { -1,-1, 0 },
+    {{ -1,-1, 0 },
     { 1,-1, 0 },
-    { -1, 1, 0 }
+    { -1, 1, 0 }}
 };
 
 struct
 {
-    float x, y, z;
-} cylinder_normals[3] =
+    Vector normals[3];
+} cylinder_normals =
 {
+    {{ 0, 0, 1 },
     { 0, 0, 1 },
-    { 0, 0, 1 },
-    { 0, 0, 1 }
+    { 0, 0, 1 }}
 };
 
 struct
@@ -210,22 +256,22 @@ struct
 // Sphere
 struct
 {
-    float x, y, z;
-} sphere_vertices[3] =
+    Vertex vertices[3];
+} sphere_vertices =
 {
-    { -1,-1, 0 },
+    {{ -1,-1, 0 },
     { 1,-1, 0 },
-    { -1, 1, 0 }
+    { -1, 1, 0 }}
 };
 
 struct
 {
-    float x, y, z;
-} sphere_normals[3] =
+    Vector normals[3];
+} sphere_normals =
 {
+    {{ 0, 0, 1 },
     { 0, 0, 1 },
-    { 0, 0, 1 },
-    { 0, 0, 1 }
+    { 0, 0, 1 }}
 };
 
 struct
