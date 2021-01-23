@@ -124,6 +124,8 @@ int main(int argc, char* argv[])
     //printf("%f",grid_vertices[0].vertices.vertices[2]);
     //printf("%f",grid_vertices[0].vertices.vertices[3]);
         init_grid(10,10);
+
+        //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE_LOOP);
     
         GLuint attrloc;
 
@@ -137,7 +139,50 @@ int main(int argc, char* argv[])
             //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
         //}
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triangle_elements), triangle_elements, GL_STATIC_DRAW);
+
+        int mul = 100;
+        printf("aa%d\n",sizeof(quad_elements));
+        printf("%d\n",sizeof(grid_elements.i[0])*8*mul);
+        /*grid_elements.i[400] = 0;
+        grid_elements.i[401] = 1;
+        grid_elements.i[402] = 1;
+        grid_elements.i[403] = 2;
+        grid_elements.i[404] = 2;
+        grid_elements.i[405] = 3;
+        grid_elements.i[406] = 3;
+        grid_elements.i[407] = 0;
+        grid_elements.i[408] = 4;
+        grid_elements.i[409] = 5;
+        grid_elements.i[410] = 5;
+        grid_elements.i[411] = 6;
+        grid_elements.i[412] = 6;
+        grid_elements.i[413] = 7;
+        grid_elements.i[414] = 7;
+        grid_elements.i[415] = 4;*/
+        /*grid_elements.i[416] = 8;
+        grid_elements.i[417] = 9;
+        grid_elements.i[418] = 9;
+        grid_elements.i[419] = 10;
+        grid_elements.i[420] = 10;
+        grid_elements.i[421] = 11;
+        grid_elements.i[422] = 11;
+        grid_elements.i[423] = 8;
+        grid_elements.i[424] = 12;
+        grid_elements.i[425] = 13;
+        grid_elements.i[426] = 13;
+        grid_elements.i[427] = 14;
+        grid_elements.i[428] = 14;
+        grid_elements.i[429] = 15;
+        grid_elements.i[430] = 15;
+        grid_elements.i[431] = 12;*/
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(grid_elements.i[0])*8*mul,grid_elements.i,GL_STATIC_DRAW); //grid_elements.i[200], GL_STATIC_DRAW);
+        
+        int* datae = (int*)malloc(sizeof(grid_elements.i[0])*8*mul);
+        glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,sizeof(grid_elements.i[0])*8*mul,datae);
+        printf("%d\n\n",sizeof(datae));
+        for(int i = 0; i < sizeof(datae)*mul; i++){
+            //printf("\n %d \n",datae[i]);
+        }
 
         /*for(int i = 0; i < 100; i++){
             printf("%d\n",i);
@@ -169,7 +214,21 @@ int main(int argc, char* argv[])
 
             attrloc = glGetAttribLocation(program, "vPos");
             glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices.vertices), triangle_vertices.vertices, GL_STATIC_DRAW);
+//            printf("%f %f %f\n",grid_quads.vertices[196].x,grid_quads.vertices[196].y,grid_quads.vertices[196].z);//&grid_quads.vertices[196]
+            printf("ASD %d %d \n",sizeof(grid_quads.vertices)*4*(mul+1),sizeof(grid_quads.vertices));
+            //printf("%d\n",sizeof(quad_vertices.vertices));
+            int size = sizeof(grid_quads.vertices)*4*(mul+1);
+            printf("%dsss%d\n",sizeof(quad_vertices),size);
+            //int size = 48;
+            glBufferData(GL_ARRAY_BUFFER, size, grid_quads.vertices, GL_STATIC_DRAW);
+        float* data = (float*)calloc(size,sizeof(float));
+        glGetBufferSubData(GL_ARRAY_BUFFER,0,size,data);
+//        printf("%d\n\n%d",sizeof(data),sizeof(grid_quads.vertices)*4*(mul+1));
+//sizeof(data)*(mul+2)
+        for(int i = 0; i < size; i++){
+            //printf("%d \n %f %f \n",i,data[i],grid_quads.vertices[i]);
+        }
+
             glEnableVertexAttribArray(attrloc);
             glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glBindBuffer(GL_ARRAY_BUFFER,0);
@@ -228,7 +287,7 @@ int main(int argc, char* argv[])
         //mat4x4_rotate_Y(m, m, (float) glfwGetTime());
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
-        vec3 eye = {0,3,-1};
+        vec3 eye = {0,1,-1};
         vec3 center = {0,0,0};
         vec3 up = {0,1,0};
 
@@ -236,7 +295,7 @@ int main(int argc, char* argv[])
         //ratio = 1.0f/ratio;
         float fov_y = 14.0f;
         float near = 0.1f;
-        float far = 20.0f;
+        float far = 450.0f;
         mat4x4_perspective(p, ratio, fov_y, near, far);
         mat4x4_mul(mvp, v, m);
         mat4x4_mul(mvp, p, mvp);
@@ -252,7 +311,7 @@ int main(int argc, char* argv[])
         //glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
         //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, (void*)0);
 //        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, (void*)0);
-        glDrawElements(GL_LINE_LOOP, 200, GL_UNSIGNED_INT, (void*)0);
+        glDrawElements(GL_LINES, (mul+1)*8, GL_UNSIGNED_INT, 0);
         //glDrawElements(GL_TRIANGLES,4,GL_UNSIGNED_INT,(void*)0);
 
         glfwSwapBuffers(window);

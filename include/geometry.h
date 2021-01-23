@@ -42,18 +42,18 @@ extern struct
 // Grid
 extern struct
 {
-    Vertex vertices;
-} *grid_vertices;
+    Vertex* vertices;
+} grid_quads;
 
 extern struct
 {
-    Vector normals;
-} *grid_normals;
+    Vector* normals;
+} grid_normals;
 
 extern struct
 {
-    int i;
-} *grid_elements;
+    int* i;
+} grid_elements;
 
 void init_grid(int length, int width);
 void delete_grid();
