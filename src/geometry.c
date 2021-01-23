@@ -53,13 +53,13 @@ struct
 
 struct
 {
-    Vector normals[4];
-} quad_normals =
+    Vector normals;
+} quad_normals[4] =
 {
-    {{ 0, 1, 0 },
     { 0, 1, 0 },
     { 0, 1, 0 },
-    { 0, 1, 0 }}
+    { 0, 1, 0 },
+    { 0, 1, 0 }
 };
 
 struct
@@ -91,12 +91,14 @@ struct
 
 void init_grid(int length, int width){
     grid_quads = (Vertex*)malloc(length*width*sizeof(quad_vertices));
-    grid_normals = (Vector*)malloc(length*width);
-    grid_elements = (int*)malloc(length*width);
+    grid_normals = (Vector*)malloc(length*width*sizeof(quad_normals));
+    grid_elements = (int*)malloc(length*width*sizeof(quad_elements));
     for(int i = 0; i < length*width; i++){
         //grid_vertices[i].vertices[0].x
 
         memcpy(grid_quads[i].vertices,quad_vertices,sizeof(quad_vertices));
+        memcpy(grid_normals[i].normals,quad_normals,sizeof(quad_normals));
+        memcpy(grid_elements[i].i,quad_elements,sizeof(quad_elements));
         //memcpy(grid_normals[i].normals,quad_normals.normals,4);
         //grid_vertices[i].vertices = quad_vertices.vertices;
         //grid_normals[i].normals = quad_normals.normals;
@@ -105,12 +107,44 @@ void init_grid(int length, int width){
     }
 
     for(int i = 0; i < length*width; i++){
-        printf("%d\n",i);
+        if(i < 50){
+            grid_quads[i].vertices[0].x-=(49-i)/2;
+            grid_quads[i].vertices[0].z-=(49-i)/2;
+            grid_quads[i].vertices[1].x-=(49-i)/2;
+            grid_quads[i].vertices[1].z-=(49-i)/2;
+            grid_quads[i].vertices[2].x-=(49-i)/2;
+            grid_quads[i].vertices[2].z-=(49-i)/2;
+            grid_quads[i].vertices[3].x-=(49-i)/2;
+            grid_quads[i].vertices[3].z-=(49-i)/2;
+        } else {
+            grid_quads[i].vertices[0].x+=(i-49)/2;
+            grid_quads[i].vertices[0].z+=(i-49)/2;
+            grid_quads[i].vertices[1].x+=(i-49)/2;
+            grid_quads[i].vertices[1].z+=(i-49)/2;
+            grid_quads[i].vertices[2].x+=(i-49)/2;
+            grid_quads[i].vertices[2].z+=(i-49)/2;
+            grid_quads[i].vertices[3].x+=(i-49)/2;
+            grid_quads[i].vertices[3].z+=(i-49)/2;
+        }
+        printf("Q%d\n",i);
         printf("%f %f %f\n",grid_quads[i].vertices[0].x,grid_quads[i].vertices[0].y,grid_quads[i].vertices[0].z);
         printf("%f %f %f\n",grid_quads[i].vertices[1].x,grid_quads[i].vertices[1].y,grid_quads[i].vertices[1].z);
         printf("%f %f %f\n",grid_quads[i].vertices[2].x,grid_quads[i].vertices[2].y,grid_quads[i].vertices[2].z);
         printf("%f %f %f\n",grid_quads[i].vertices[3].x,grid_quads[i].vertices[3].y,grid_quads[i].vertices[3].z);
+        printf("%d\n",i);
+        printf("%f %f %f\n",grid_normals[i].normals[0].x,grid_normals[i].normals[0].y,grid_normals[i].normals[0].z);
+        printf("%f %f %f\n",grid_normals[i].normals[1].x,grid_normals[i].normals[1].y,grid_normals[i].normals[1].z);
+        printf("%f %f %f\n",grid_normals[i].normals[2].x,grid_normals[i].normals[2].y,grid_normals[i].normals[2].z);
+        printf("%f %f %f\n",grid_normals[i].normals[3].x,grid_normals[i].normals[3].y,grid_normals[i].normals[3].z);
+        printf("%d\n",i);
+        printf("%d %d %d %d\n",grid_elements[i].i[0],grid_elements[i].i[1],grid_elements[i].i[2],grid_elements[i].i[3]);
     }
+}
+
+void delete_grid(){
+    free(grid_quads);
+    free(grid_normals);
+    free(grid_elements);
 }
 
 // Cube

@@ -56,6 +56,7 @@ extern struct
 } *grid_elements;
 
 void init_grid(int length, int width);
+void delete_grid();
 
 // Cube
 extern struct

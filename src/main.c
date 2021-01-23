@@ -63,12 +63,7 @@ static GLuint mesh_vbo[2];
 int main(int argc, char* argv[])
 {
     printf("ECSE458 CICMR Simulation\n");
-    //printf("%f",grid_vertices[0].vertices.vertices[0]);
-    //printf("%f",grid_vertices[0].vertices.vertices[1]);
-    //printf("%f",grid_vertices[0].vertices.vertices[2]);
-    //printf("%f",grid_vertices[0].vertices.vertices[3]);
-    init_grid(10,10);
-    return 0;
+
     GLFWwindow* window;
     GLuint vertex_buffer, normal_buffer, element_buffer, vertex_shader, fragment_shader, program;
     GLint mvp_location, vpos_location, vcol_location;
@@ -124,6 +119,12 @@ int main(int argc, char* argv[])
     //vpos_location = glGetAttribLocation(program, "vPos");
     vcol_location = glGetAttribLocation(program, "vCol");
 
+    //printf("%f",grid_vertices[0].vertices.vertices[0]);
+    //printf("%f",grid_vertices[0].vertices.vertices[1]);
+    //printf("%f",grid_vertices[0].vertices.vertices[2]);
+    //printf("%f",grid_vertices[0].vertices.vertices[3]);
+        init_grid(10,10);
+    
         GLuint attrloc;
 
         glGenVertexArrays(1, &mesh);
@@ -257,6 +258,8 @@ int main(int argc, char* argv[])
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    delete_grid();
 
     glfwDestroyWindow(window);
 
