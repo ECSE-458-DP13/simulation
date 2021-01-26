@@ -94,9 +94,10 @@ struct
 } grid_elements;
 
 void init_grid(int length, int width){
-    grid_quads.vertices = (Vertex*)malloc(length*width*12*4);
-    grid_normals.normals = (Vector*)malloc(length*width*12*4);
-    grid_elements.i = (int*)malloc(length*width*8*4);
+    grid_quads.vertices = (Vertex*)malloc(length*width*sizeof(quad_vertices[0])*sizeof(float));
+    grid_normals.normals = (Vector*)malloc(length*width*sizeof(quad_normals[0])*sizeof(float));
+    grid_elements.i = (int*)malloc(length*width*(sizeof(quad_elements)/sizeof(quad_elements[0]))*sizeof(int));
+
     for(int i = 0; i < length*width; i++){
         //grid_vertices[i].vertices[0].x
         //12 * 100 total
@@ -121,7 +122,7 @@ void init_grid(int length, int width){
             grid_quads.vertices[4*i+3].z=5.5f;
 
         /*if(i < 10){*/
-            printf("ROW: %d COL: %d\n",i/10,i%10);
+            //printf("ROW: %d COL: %d\n",i/10,i%10);
             grid_quads.vertices[4*i+0].x+=(int)(i%10);
             grid_quads.vertices[4*i+1].x+=(int)(i%10);
             grid_quads.vertices[4*i+2].x+=(int)(i%10);
@@ -157,7 +158,8 @@ void init_grid(int length, int width){
         grid_elements.i[8*i+5]-=200;
         grid_elements.i[8*i+6]-=200;
         grid_elements.i[8*i+7]-=200;*/
-        printf("Q%d\n",i);
+
+        /*printf("Q%d\n",i);
         printf("%f %f %f\n",grid_quads.vertices[4*i+0].x,grid_quads.vertices[4*i+0].y,grid_quads.vertices[4*i+0].z);
         printf("%f %f %f\n",grid_quads.vertices[4*i+1].x,grid_quads.vertices[4*i+1].y,grid_quads.vertices[4*i+1].z);
         printf("%f %f %f\n",grid_quads.vertices[4*i+2].x,grid_quads.vertices[4*i+2].y,grid_quads.vertices[4*i+2].z);
@@ -168,9 +170,12 @@ void init_grid(int length, int width){
         printf("%f %f %f\n",grid_normals.normals[4*i+2].x,grid_normals.normals[4*i+2].y,grid_normals.normals[4*i+2].z);
         printf("%f %f %f\n",grid_normals.normals[4*i+3].x,grid_normals.normals[4*i+3].y,grid_normals.normals[4*i+3].z);
         printf("%d\n",i);
-        printf("%d %d %d %d %d %d %d %d\n",grid_elements.i[8*i+0],grid_elements.i[8*i+1],grid_elements.i[8*i+2],grid_elements.i[8*i+3],grid_elements.i[8*i+4],grid_elements.i[8*i+5],grid_elements.i[8*i+6],grid_elements.i[8*i+7]);
+        printf("%d %d %d %d %d %d %d %d\n",grid_elements.i[8*i+0],grid_elements.i[8*i+1],grid_elements.i[8*i+2],grid_elements.i[8*i+3],grid_elements.i[8*i+4],grid_elements.i[8*i+5],grid_elements.i[8*i+6],grid_elements.i[8*i+7]);*/
     }
-    printf("asdasd %d %d %d\n",sizeof(quad_vertices[0]),sizeof(quad_normals),sizeof(quad_elements));
+        /*printf("ALLA%d %d %d",(sizeof(quad_elements)/sizeof(quad_elements[0])),sizeof(grid_quads.vertices[0]));
+    printf("asdasd %d %d %d %d %d\n",sizeof(quad_elements[0]),sizeof(quad_elements),sizeof(quad_vertices->vertices),sizeof(quad_normals),sizeof(quad_elements));
+    printf("dsds %d %d %d %d\n",sizeof(float),sizeof(grid_quads),sizeof(grid_quads.vertices),sizeof(grid_quads.vertices[0]));
+    printf("dsds %d %d %d\n",sizeof(grid_elements),sizeof(grid_elements.i),sizeof(grid_elements.i[0]));*/
 }
 
 void delete_grid(){
@@ -353,17 +358,115 @@ struct
 // Load .obj model
 // vertices, normals, faces
 char** load_obj_model(char* file_path){
-   char *str;
+    //load file
+    /*FILE* labelFileHandle;
+    int lengthOfFile = -1;    
 
-   /* Initial memory allocation */
-   str = (char *) malloc(15);
-   strcpy(str, "sssss");
-   printf("String = %s,  Address = %u\n", str, str);
+    if(argc == 4 && atoi(argv[2]) > 1 && atoi(argv[3]) >= 1 && atoi(argv[3]) <= 7 && lengthOfFile > 0 && lengthOfFile <= 256){}
 
-   /* Reallocating memory */
-   str = (char *) realloc(str, 25);
-   strcat(str, "test");
-   printf("String = %s,  Address = %u\n", str, str);
+    if(argc == 4){
+        labelFileHandle = fopen(argv[1], "r");
+        if(labelFileHandle != NULL){
+            fseek(labelFileHandle, 0, SEEK_END);
+            lengthOfFile = ftell(labelFileHandle);
+            fclose(labelFileHandle);
+        } else {
+            goto fileerror;
+        }
+    }
 
-   free(str);
+    labelFileHandle = fopen(argv[1],"r");
+
+        unsigned int maxwkcount = 0;
+        unsigned int line_count = 0;
+        unsigned int counter = 0;
+        const char space[2] = " ";
+        char* days[7];
+        char* months[12];
+        char line[257];
+        char* token;
+        while(fgets(line, sizeof(line), labelFileHandle)){
+            if(line_count == 0){
+                token = strtok(line, space);
+                for(i; i < 7; i++){
+                    if(token != NULL){
+                        days[counter] = malloc(strlen(token)+1);
+                        if(days[counter] == NULL){ fclose(labelFileHandle); goto mallocerror; }
+                        token[strcspn(token, "\n")] = 0;
+                        strcpy(days[counter], token);
+                    } else {
+                        fclose(labelFileHandle);
+                        goto fileerror;
+                    }
+                    maxwkcount += strlen(token);
+                    token = strtok(NULL, space);
+                    counter++;
+                }
+                counter = 0;
+                i=0;
+                line_count++;
+            } else if (line_count == 1){
+                token = strtok(line, space);
+                for(i; i < 12; i++){
+                    if(token != NULL){
+                        months[counter] = malloc(strlen(token)+1);
+                        if(months[counter] == NULL){ fclose(labelFileHandle); goto mallocerror; }
+                        token[strcspn(token, "\n")] = 0;
+                        strcpy(months[counter], token);
+                    } else {
+                        fclose(labelFileHandle);
+                        goto fileerror;
+                    }
+                    token = strtok(NULL, space);
+                    counter++;
+                }
+                counter = 0;
+                i=0;
+            }
+        }
+        fclose(labelFileHandle);
+
+unsigned int line_count = 0;
+    unsigned int space_count = 0;
+    char c;
+    while((c = fgetc(labelFileHandle)) != EOF){
+        const char* c1 = &c;
+        const char* c2 = "\n";
+        const char* c3 = " ";    
+            
+        if(strncmp(c1,c2,1) == 0){
+            printf(" ");
+            space_count = 0;
+            line_count++;
+        } else if(strncmp(c1,c3,1) == 0){
+            space_count++;
+            continue;
+        }
+
+        if(line_count == 0 && space_count == day){
+            if(strncmp(c1,c2,1) != 0 && strncmp(c1,c3,1) != 0){
+                printf("%c",c);
+            }
+        } else if (line_count == 1 && space_count == month){
+            if(strncmp(c1,c2,1) != 0 && strncmp(c1,c3,1) != 0){
+                printf("%c",c);
+            }
+        }
+        
+    }
+    fclose(labelFileHandle);*/
+
+    char *str;
+
+    /* Initial memory allocation */
+    str = (char *) malloc(15);
+    strcpy(str, "sssss");
+    printf("String = %s,  Address = %u\n", str, str);
+
+    /* Reallocating memory */
+    str = (char *) realloc(str, 25);
+    strcat(str, "test");
+    printf("String = %s,  Address = %u\n", str, str);
+
+    free(str);
 }
