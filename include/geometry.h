@@ -108,6 +108,9 @@ extern struct
 
 // Load .obj model
 // vertices, normals, faces
+float* obj_vertices;
+int* obj_elements;
+
 char** load_obj_model(char* file_path);
 
 #endif
