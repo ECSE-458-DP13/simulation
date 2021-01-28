@@ -246,7 +246,7 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
 
         mat4x4_look_at(v,eye,center,up);
         //ratio = 1.0f/ratio;
-        float fov_y = 14.0f;
+        float fov_y = 3.0f;
         float near = 0.1f;
         float far = 450.0f;
         mat4x4_perspective(p, ratio, fov_y, near, far);
