@@ -193,18 +193,18 @@ glBindBuffer(GL_ARRAY_BUFFER,0);
 //            printf("%f %f %f\n",grid_quads.vertices[196].x,grid_quads.vertices[196].y,grid_quads.vertices[196].z);//&grid_quads.vertices[196]
     printf("ASD %d %d \n",sizeof(grid_quads.vertices)*4*(mul+1),sizeof(grid_quads.vertices));
     //printf("%d\n",sizeof(quad_vertices.vertices));
-    int size = sizeof(grid_quads.vertices)*4*(mul+1);
+    int size = sizeof(grid_quads.vertices)*8*(mul+1);
     printf("%dsss%d\n",sizeof(quad_vertices),size);
     //int size = 48;
     glBufferData(GL_ARRAY_BUFFER, size, grid_quads.vertices, GL_STATIC_DRAW);
 
 
-    for(int i = 0; i < 4*(mul+1)*2; i+=4){
+    /*for(int i = 0; i < 4*(mul+1)*2; i+=4){
         printf("i: %d vertices: %f %f %f %f %f %f %f %f %f %f %f %f\n",i,grid_quads.vertices[i].x,grid_quads.vertices[i].y,grid_quads.vertices[i].z,
 grid_quads.vertices[i+1].x,grid_quads.vertices[i+1].y,grid_quads.vertices[i+1].z,
 grid_quads.vertices[i+2].x,grid_quads.vertices[i+2].y,grid_quads.vertices[i+2].z,
 grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z);
-    }
+    }*/
 
 
     /*int test = -1;
@@ -215,8 +215,8 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
     glGetBufferSubData(GL_ARRAY_BUFFER,0,size,data);
 //        printf("%d\n\n%d",sizeof(data),sizeof(grid_quads.vertices)*4*(mul+1));
 //sizeof(data)*(mul+2)
-    for(int i = 0; i < size; i+=3){
-        printf("%d %f %f %f V %f %f %f \n",i,data[i],data[i+1],data[i+2],grid_quads.vertices[i].x,grid_quads.vertices[i].y,grid_quads.vertices[i].z);
+    for(int i = 0; i < size/4 + 200; i+=3){
+        printf("%d %f %f %f V %f %f %f \n",i,data[i],data[i+1],data[i+2],grid_quads.vertices[i/3].x,grid_quads.vertices[i/3].y,grid_quads.vertices[i/3].z);
     }
 
     glEnableVertexAttribArray(attrloc);
@@ -240,7 +240,7 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
         //mat4x4_rotate_Y(m, m, (float) glfwGetTime());
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
-        vec3 eye = {0,1,-1};
+        vec3 eye = {0,1,-5};
         vec3 center = {0,0,0};
         vec3 up = {0,1,0};
 
