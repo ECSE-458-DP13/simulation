@@ -355,9 +355,53 @@ struct
     { 2 }
 };
 
+// .obj Models
+struct
+{
+    Vertex* vertices;
+} obj_vertices;
+
+struct
+{
+    Vector* normals;
+} obj_normals;
+
+struct
+{
+    int* i;
+} obj_elements;
+
+
 // Load .obj model
 // vertices, normals, faces
 char** load_obj_model(char* file_path){
+    FILE* objFileHandle;
+    int lengthOfObjFile = -1;
+    objFileHandle = fopen(file_path, "r");
+    if(objFileHandle != NULL){
+        fseek(labelFileHandle, 0, SEEK_END);
+        lengthOfObjFile = ftell(labelFileHandle);
+        fclose(objFileHandle);
+    }
+
+    objFileHandle = fopen(file_path,"r");
+
+    char c;
+    while((c = fgetc(objFileHandle)) != EOF){
+        const char* c1 = &c;
+        const char* c2 = "\n";
+        const char* c3 = " ";    
+            
+        if(strncmp(c1,c2,1) == 0){
+            printf(" ");
+            space_count = 0;
+            line_count++;
+        } else if(strncmp(c1,c3,1) == 0){
+            space_count++;
+            continue;
+        }
+    }
+
     //load file
     /*FILE* labelFileHandle;
     int lengthOfFile = -1;    
