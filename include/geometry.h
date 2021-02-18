@@ -106,11 +106,24 @@ extern struct
     int i;
 } sphere_elements[24];
 
+// .obj Models
+extern struct
+{
+    Vertex* vertices;
+} obj_vertices;
+
+extern struct
+{
+    Vector* normals;
+} obj_normals;
+
+extern struct
+{
+    int* i;
+} obj_elements;
+
 // Load .obj model
 // vertices, normals, faces
-float* obj_vertices;
-int* obj_elements;
-
 char** load_obj_model(char* file_path);
 
 #endif

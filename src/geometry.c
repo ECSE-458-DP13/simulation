@@ -373,34 +373,112 @@ struct
 
 
 // Load .obj model
-// vertices, normals, faces
+// vertices, (normals optional), faces
+// Assume all faces are triangles.
 char** load_obj_model(char* file_path){
     FILE* objFileHandle;
     int lengthOfObjFile = -1;
     objFileHandle = fopen(file_path, "r");
     if(objFileHandle != NULL){
-        fseek(labelFileHandle, 0, SEEK_END);
-        lengthOfObjFile = ftell(labelFileHandle);
+        fseek(objFileHandle, 0, SEEK_END);
+        lengthOfObjFile = ftell(objFileHandle);
         fclose(objFileHandle);
     }
 
     objFileHandle = fopen(file_path,"r");
 
+    int total_vertices = 1;
+    int total_faces = 1;
     char c;
     while((c = fgetc(objFileHandle)) != EOF){
-        const char* c1 = &c;
-        const char* c2 = "\n";
-        const char* c3 = " ";    
+        const char* currentchar = c;
+        const char* newline = "\n";
+        const char* space = " ";
+        const char* o = 'o';  
+        const char* v = 'v';  
+        const char* n = 'n';  
+        const char* f = 'f';      
             
-        if(strncmp(c1,c2,1) == 0){
-            printf(" ");
-            space_count = 0;
-            line_count++;
-        } else if(strncmp(c1,c3,1) == 0){
-            space_count++;
-            continue;
-        }
+        if (c == 'v') {
+            c = fgetc(objFileHandle);
+            
+            // ignore other lines for now.
+            if(c != ' '){
+                while(c != '\n'){
+                    c = fgetc(objFileHandle);
+                }
+                continue;
+            }
+
+            obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,3*total_vertices*sizeof(float));
+            total_vertices++;
+            int count = 1;
+            int xyz = 0;
+            char* temp = NULL;
+            while(c != '\n'){    
+                c = fgetc(objFileHandle);
+                if(c == ' ' | c == '\n'){
+                    const char* floatvalue = temp;
+                    float coordinate = atof(floatvalue);
+
+                    switch(xyz){
+                        case 0:
+                            obj_vertices.vertices[total_vertices-1].x = coordinate;
+                            break;
+                        case 1:
+                            obj_vertices.vertices[total_vertices-1].y = coordinate;
+                            break;
+                        default:
+                        case 2:
+                            obj_vertices.vertices[total_vertices-1].z = coordinate;
+                            break;
+                    }
+                    
+                    free(temp);
+                    temp = NULL;
+                    count = 1;
+                    xyz++;
+                    printf("%f ",coordinate);
+                }
+                temp = (char*)realloc(temp, count);
+                temp[count-1] = c;
+                count++;
+            }
+            printf("\n");
+        } /*else if(c == 'f') {
+            c = fgetc(objFileHandle);
+
+            // ignore other lines for now.
+            if(c != ' '){
+                while(c != '\n'){
+                    c = fgetc(objFileHandle);
+                }
+                continue;
+            }
+
+            int count = 1;
+            char* temp = NULL;
+            while(c != '\n'){
+                c = fgetc(objFileHandle);
+                if(c == ' ' | c == '\n'){
+                    const char* intvalue = temp;
+                    int element = atoi(intvalue);
+                    // we ignore the face values for normals here.
+                    //printf("%s %d ",intvalue,element);
+                    free(temp);
+                    temp = NULL;
+                    count = 1; 
+                    printf("%d ",element);
+                }
+                temp = (char*)realloc(temp, count);
+                temp[count-1] = c;
+                count++;
+            }
+            printf("\n");
+        }*/
     }
+
+    return;
 
     //load file
     /*FILE* labelFileHandle;

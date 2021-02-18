@@ -64,6 +64,9 @@ int main(int argc, char* argv[])
 {
     printf("ECSE458 CICMR Simulation\n");
 
+    load_obj_model("./models/sphere.obj");
+    return 0;
+
     GLFWwindow* window;
     GLuint vertex_buffer, normal_buffer, element_buffer, vertex_shader, fragment_shader, program;
     GLint mvp_location, vpos_location, vcol_location;
