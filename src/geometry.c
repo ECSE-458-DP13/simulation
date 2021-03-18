@@ -390,15 +390,16 @@ char** load_obj_model(char* file_path){
     int total_vertices = 1;
     int total_faces = 1;
     char c;
+obj_vertices.vertices = NULL;
     while((c = fgetc(objFileHandle)) != EOF){
         const char* currentchar = c;
         const char* newline = "\n";
         const char* space = " ";
-        const char* o = 'o';  
-        const char* v = 'v';  
-        const char* n = 'n';  
-        const char* f = 'f';      
-            
+        const char* o = 'o';
+        const char* v = 'v';
+        const char* n = 'n';
+        const char* f = 'f';
+
         if (c == 'v') {
             c = fgetc(objFileHandle);
             
@@ -410,7 +411,30 @@ char** load_obj_model(char* file_path){
                 continue;
             }
 
-            obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,3*total_vertices*sizeof(float));
+
+            /*obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,(1));
+
+            obj_vertices.vertices[0].x = 1.0f;         
+            obj_vertices.vertices[0].y = 1.0f;   
+            obj_vertices.vertices[0].z = 1.0f;    
+            obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,(12));
+            obj_vertices.vertices[1].x = 2.0f;     
+            obj_vertices.vertices[1].y = 1.0f; 
+            obj_vertices.vertices[1].z = 1.0f; 
+            printf("%f %f %f\n",obj_vertices.vertices[1].x,obj_vertices.vertices[1].y,obj_vertices.vertices[1].z);
+
+            return NULL;*/
+            //printf("total_vertices: %d %d\n",total_vertices,sizeof(obj_vertices.vertices[0]));
+            printf("%d\n",total_vertices*sizeof(obj_vertices.vertices));
+//total_vertices++;
+            obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,((total_vertices)*sizeof(Vertex)+sizeof(*obj_vertices.vertices)));
+            if(obj_vertices.vertices == NULL){
+                return;
+            }
+            /*printf("%f %f %f\n",obj_vertices.vertices[0].x,obj_vertices.vertices[0].y,obj_vertices.vertices[0].z);
+            printf("test");
+            printf("%f %f %f\n",obj_vertices.vertices[1].x,obj_vertices.vertices[1].y,obj_vertices.vertices[1].z);
+            printf("%d total_vertices: %d\n%d%d\n",sizeof(Vertex),total_vertices,sizeof(obj_vertices.vertices),sizeof(float));*/
             total_vertices++;
             int count = 1;
             int xyz = 0;
