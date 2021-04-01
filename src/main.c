@@ -64,9 +64,6 @@ int main(int argc, char* argv[])
 {
     printf("ECSE458 CICMR Simulation\n");
 
-    load_obj_model("./models/sphere.obj");
-    return 0;
-
     GLFWwindow* window;
     GLuint vertex_buffer, normal_buffer, element_buffer, vertex_shader, fragment_shader, program;
     GLint mvp_location, vpos_location, vcol_location;
@@ -139,7 +136,25 @@ int main(int argc, char* argv[])
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[i]);
         //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
     //}
+    
+
+    load_obj_model("./models/sphere.obj");
+//obj_vertices.vertices;
+//obj_elements.i;
+
+attrloc = glGetAttribLocation(program, "vPos");
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
+    printf("%d %d\n",total_faces,total_vertices);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj_elements.i[0])*8*total_faces,obj_elements.i,GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
+glBufferData(GL_ARRAY_BUFFER, sizeof(obj_vertices.vertices)*8*total_vertices, obj_vertices.vertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(attrloc);
+    glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    //glBindBuffer(GL_ARRAY_BUFFER,0);
+
+/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
 
     int mul = 100;
     /*printf("aa%d\n",sizeof(quad_elements));
@@ -220,11 +235,7 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
 //sizeof(data)*(mul+2)
     for(int i = 0; i < size/4 + 200; i+=3){
         printf("%d %f %f %f V %f %f %f \n",i,data[i],data[i+1],data[i+2],grid_quads.vertices[i/3].x,grid_quads.vertices[i/3].y,grid_quads.vertices[i/3].z);
-    }
-
-    glEnableVertexAttribArray(attrloc);
-    glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    //glBindBuffer(GL_ARRAY_BUFFER,0);
+    }*/
 
     while (!glfwWindowShouldClose(window))
     {
@@ -267,8 +278,11 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
         //glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
         //glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, (void*)0);
 //        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, (void*)0);
-        glDrawElements(GL_LINES, (mul+1)*8, GL_UNSIGNED_INT, 0);
-        //glDrawElements(GL_TRIANGLES,4,GL_UNSIGNED_INT,(void*)0);
+        
+//old grid
+//glDrawElements(GL_LINES, (mul+1)*8, GL_UNSIGNED_INT, 0);
+// sphere?
+        glDrawElements(GL_TRIANGLES,total_faces,GL_UNSIGNED_INT,(void*)0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

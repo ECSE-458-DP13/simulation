@@ -122,6 +122,9 @@ extern struct
     int* i;
 } obj_elements;
 
+int total_vertices;
+int total_faces;
+
 // Load .obj model
 // vertices, normals, faces
 char** load_obj_model(char* file_path);

@@ -371,11 +371,13 @@ struct
     int* i;
 } obj_elements;
 
+int total_vertices = 1;
+int total_faces = 1;
 
 // Load .obj model
 // vertices, (normals optional), faces
 // Assume all faces are triangles.
-char** load_obj_model(char* file_path){
+void load_obj_model(char* file_path){
     FILE* objFileHandle;
     int lengthOfObjFile = -1;
     objFileHandle = fopen(file_path, "r");
@@ -387,10 +389,8 @@ char** load_obj_model(char* file_path){
 
     objFileHandle = fopen(file_path,"r");
 
-    int total_vertices = 1;
-    int total_faces = 1;
     char c;
-obj_vertices.vertices = NULL;
+
     while((c = fgetc(objFileHandle)) != EOF){
         const char* currentchar = c;
         const char* newline = "\n";
@@ -402,7 +402,12 @@ obj_vertices.vertices = NULL;
 
         if (c == 'v') {
             c = fgetc(objFileHandle);
-            
+
+            // vertex normals            
+            if(c == 'n') {
+
+            }
+
             // ignore other lines for now.
             if(c != ' '){
                 while(c != '\n'){
@@ -411,30 +416,8 @@ obj_vertices.vertices = NULL;
                 continue;
             }
 
-
-            /*obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,(1));
-
-            obj_vertices.vertices[0].x = 1.0f;         
-            obj_vertices.vertices[0].y = 1.0f;   
-            obj_vertices.vertices[0].z = 1.0f;    
-            obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,(12));
-            obj_vertices.vertices[1].x = 2.0f;     
-            obj_vertices.vertices[1].y = 1.0f; 
-            obj_vertices.vertices[1].z = 1.0f; 
-            printf("%f %f %f\n",obj_vertices.vertices[1].x,obj_vertices.vertices[1].y,obj_vertices.vertices[1].z);
-
-            return NULL;*/
-            //printf("total_vertices: %d %d\n",total_vertices,sizeof(obj_vertices.vertices[0]));
-            printf("%d\n",total_vertices*sizeof(obj_vertices.vertices));
-//total_vertices++;
             obj_vertices.vertices = (Vertex*)realloc(obj_vertices.vertices,((total_vertices)*sizeof(Vertex)+sizeof(*obj_vertices.vertices)));
-            if(obj_vertices.vertices == NULL){
-                return;
-            }
-            /*printf("%f %f %f\n",obj_vertices.vertices[0].x,obj_vertices.vertices[0].y,obj_vertices.vertices[0].z);
-            printf("test");
-            printf("%f %f %f\n",obj_vertices.vertices[1].x,obj_vertices.vertices[1].y,obj_vertices.vertices[1].z);
-            printf("%d total_vertices: %d\n%d%d\n",sizeof(Vertex),total_vertices,sizeof(obj_vertices.vertices),sizeof(float));*/
+
             total_vertices++;
             int count = 1;
             int xyz = 0;
@@ -469,7 +452,7 @@ obj_vertices.vertices = NULL;
                 count++;
             }
             printf("\n");
-        } /*else if(c == 'f') {
+        } else if(c == 'f') {
             c = fgetc(objFileHandle);
 
             // ignore other lines for now.
@@ -480,27 +463,36 @@ obj_vertices.vertices = NULL;
                 continue;
             }
 
+            //printf("%d\n",(total_vertices)*sizeof(int*)+sizeof(*obj_elements.i));
+
+            obj_elements.i = (int*)realloc(obj_elements.i,((total_faces)*sizeof(int*)+sizeof(*obj_elements.i)));
+
+            total_faces++;
             int count = 1;
             char* temp = NULL;
-            while(c != '\n'){
+            while(c != '\n'){    
                 c = fgetc(objFileHandle);
                 if(c == ' ' | c == '\n'){
                     const char* intvalue = temp;
-                    int element = atoi(intvalue);
-                    // we ignore the face values for normals here.
-                    //printf("%s %d ",intvalue,element);
+                    int coordinate = atoi(intvalue);
+
+                    obj_elements.i[total_faces-1] = coordinate;
+                    
                     free(temp);
                     temp = NULL;
-                    count = 1; 
-                    printf("%d ",element);
+                    count = 1;
+                    printf("%d ",coordinate);
                 }
                 temp = (char*)realloc(temp, count);
                 temp[count-1] = c;
                 count++;
             }
             printf("\n");
-        }*/
+        }
     }
+
+    total_vertices=total_vertices-1;
+    total_faces=total_faces-1;
 
     return;
 
