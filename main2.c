@@ -25,13 +25,22 @@ static const struct
 
 static const char* vertex_shader_text =
 "#version 110\n"
-"uniform mat4 MVP;\n"
-"attribute vec3 vCol;\n"
-"attribute vec3 vPos;\n"
+"uniform mat4 M;\n"
+"uniform mat4 V;\n"
+"uniform mat4 P;\n"
+"uniform mat3 MinvT;\n"
+"in vec4 position;\n" 
+"in vec3 normal;\n"
+"out vec3 positionForFP;\n"
+"varying vec3 normalForFP;\n"
 "varying vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = MVP * vec4(vPos, 1.0);\n"
+"    vec4 posV = V * M * position;\n"
+"    vec4 tmp = V * vec4( MinvT * normal, 0 );\n"
+"    normalForFP = normalize( tmp.xyz );\n"
+"    positionForFP = posV.xyz;\n"
+"    gl_Position = P * posV;\n"
 "    color = vec3(1.0,1.0,0.0);\n"
 "}\n";
 //vec2 vPos
@@ -40,10 +49,32 @@ static const char* vertex_shader_text =
 
 static const char* fragment_shader_text =
 "#version 110\n"
+"uniform vec3 ambient = vec3(1.0f,1.0f,1.0f);\n"
+"uniform vec3 lightCol = vec3(1.0f,1.0f,1.0f);\n"
+"uniform vec3 lightDir = vec3(1.0f,0.0f,0.0f);\n"
+"uniform vec3 halfVec = vec3(0.0f, 0.0f, 1.0f);\n"
+"uniform float shine = 1.0f;\n"
+"uniform float strength = 0.5f;\n"
+"//uniform vec4 kd;\n"
+"varying vec3 normalForFP;\n"
+"//out vec4 fragColor;\n"
 "varying vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_FragColor = vec4(color, 1.0);\n"
+"float diffuseAmount = max(0.0, dot(normalForFP, lightDir));\n"
+"float specularAmount = max(0.0, dot(normalForFP, halfVec));\n"
+"if(diffuseAmount == 0.0){\n"
+"    specularAmount = 0.0;\n"
+"} else {\n"
+"    specularAmount = pow(specularAmount, shine);\n"
+"}\n"
+"vec3 scatteredLight = ambient + lightCol * diffuseAmount;\n"
+"vec3 reflectedLight = lightCol * specularAmount * strength;\n"
+"//kd.rgb for color\n"
+"vec3 rgb = min(color * scatteredLight + reflectedLight, vec3(1.0));\n"
+"//fragColor = vec4(rgb, kd.a);\n"
+"//kd.a\n"
+"    gl_FragColor = vec4(rgb, 1.0);\n"
 "}\n";
 
 static void error_callback(int error, const char* description)
@@ -57,8 +88,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-static GLuint mesh;
-static GLuint mesh_vbo[2];
+//static GLuint mesh;
+//static GLuint mesh_vbo[2];
 
 int main(int argc, char* argv[])
 {
@@ -67,8 +98,8 @@ int main(int argc, char* argv[])
     //return 0;
 
     GLFWwindow* window;
-    GLuint vertex_buffer, normal_buffer, element_buffer, vertex_shader, fragment_shader, program;
-    GLint mvp_location, vpos_location, vcol_location;
+    GLuint mesh, mesh_vbo[2], vertex_shader, fragment_shader, program;
+    GLint m_location, minvt_location, v_location, p_location, position_location, normal_location, color_location;
 
     glfwSetErrorCallback(error_callback);
 
@@ -121,30 +152,25 @@ int main(int argc, char* argv[])
 
     glUseProgram(program);
 
-    mvp_location = glGetUniformLocation(program, "MVP");
-    //vpos_location = glGetAttribLocation(program, "vPos");
-    vcol_location = glGetAttribLocation(program, "vCol");
+    m_location = glGetUniformLocation(program, "M");
+    minvt_location = glGetUniformLocation(program, "Minvt");
+    v_location = glGetUniformLocation(program, "V");
+    p_location = glGetUniformLocation(program, "P");
+    position_location = glGetAttribLocation(program, "position");
+    normal_location = glGetAttribLocation(program, "normal");
+    color_location = glGetAttribLocation(program, "color");
 
     init_grid(10,10);
 
-    GLuint attrloc;
-
+///////////
     glGenVertexArrays(1, &mesh);
-    glGenBuffers(2, mesh_vbo);
+    glGenBuffers(3, mesh_vbo);
     glBindVertexArray(mesh);
-
-    /* Prepare the data for drawing through a buffer inidices */
-    //for(int i = 100; i < 200; i++){
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[i]);
-        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
-    //}
     
 
     /*load_obj_model("./models/quad.obj");
 //obj_vertices.vertices;
 //obj_elements.i;
-
-
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
     printf("%d %d\n",total_faces,total_vertices);
@@ -152,15 +178,19 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj_elements.i[0])*8*total_faces,ob
     glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
 glBufferData(GL_ARRAY_BUFFER, sizeof(obj_vertices.vertices)*8*total_vertices, obj_vertices.vertices, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(attrloc);
-    glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    //glBindBuffer(GL_ARRAY_BUFFER,0);
+    glEnableVertexAttribArray(position_location);
+    glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);*/
+    glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[2]);
+glBufferData(GL_ARRAY_BUFFER, sizeof(obj_normals.normals)*8*total_normals, obj_normals.normals, GL_STATIC_DRAW);
 
-attrloc = glGetAttribLocation(program, "vPos");
+    glEnableVertexAttribArray(normal_location);
+    glVertexAttribPointer(normal_location, 3, GL_FLOAT, GL_FALSE, 0, 0);*/
+///////////
 
-glBindBuffer(GL_ARRAY_BUFFER,0);
+
+
+    glBindBuffer(GL_ARRAY_BUFFER,0);
 
     int mul = 100;
     /*printf("aa%d\n",sizeof(quad_elements));
@@ -187,16 +217,15 @@ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
     //int size = 48;
     glBufferData(GL_ARRAY_BUFFER, size, grid_quads.vertices, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(attrloc);
-        glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(position_location);
+        glVertexAttribPointer(position_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
 //glBindBuffer(GL_ARRAY_BUFFER,0);
-
 
     while (!glfwWindowShouldClose(window))
     {
         float ratio;
         int width, height;
-        mat4x4 m, v, p, mvp, t;
+        mat4x4 m, minv, minvt, v, p;
 
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
@@ -208,6 +237,8 @@ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
         mat4x4_identity(m);
         //mat4x4_rotate_Y(m, m, (float) glfwGetTime());
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        mat4x4_invert(minv,m);
+        mat4x4_transpose(minvt,minv);
 
         vec3 eye = {0,5,-1};
         vec3 center = {0,0,0};
@@ -219,13 +250,13 @@ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
         float near = 0.1f;
         float far = 450.0f;
         mat4x4_perspective(p, ratio, fov_y, near, far);
-        mat4x4_mul(mvp, v, m);
-        mat4x4_mul(mvp, p, mvp);
-        //t[2][3] = 0.9f;
-        //mat4x4_add(mvp,mvp,t);
 
         glUseProgram(program);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
+
+        glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*) m);
+        glUniformMatrix4fv(minvt_location, 1, GL_FALSE, (const GLfloat*) minvt);
+        glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*) v);
+        glUniformMatrix4fv(p_location, 1, GL_FALSE, (const GLfloat*) p);
 
         //glDrawArrays(GL_TRIANGLES, 0, 3);
 

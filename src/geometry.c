@@ -406,11 +406,13 @@ void load_obj_model(char* file_path){
 
             // vertex normals            
             if(c == 'n') {
+                c = fgetc(objFileHandle);
                 obj_normals.normals = (Vector*)realloc(obj_normals.normals,((total_normals)*sizeof(Vector)+sizeof(*obj_normals.normals)));
                 total_normals++;
                 int countn = 1;
                 int n = 0;
                 char* tempn = NULL;
+                printf("vn ");
                 while(c != '\n'){    
                     c = fgetc(objFileHandle);
                     if(c == ' ' | c == '\n'){
@@ -440,6 +442,7 @@ void load_obj_model(char* file_path){
                     tempn[countn-1] = c;
                     countn++;
                 }
+                printf("\n");
                 continue;
             }
 
@@ -457,6 +460,7 @@ void load_obj_model(char* file_path){
             int count = 1;
             int xyz = 0;
             char* temp = NULL;
+            printf("v ");
             while(c != '\n'){    
                 c = fgetc(objFileHandle);
                 if(c == ' ' | c == '\n'){
@@ -505,6 +509,7 @@ void load_obj_model(char* file_path){
             total_faces++;
             int count = 1;
             char* temp = NULL;
+            printf("f ");
             while(c != '\n'){    
                 c = fgetc(objFileHandle);
                 if(c == ' ' | c == '\n'){

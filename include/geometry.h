@@ -123,6 +123,7 @@ extern struct
 } obj_elements;
 
 int total_vertices;
+int total_normals;
 int total_faces;
 
 // Load .obj model
