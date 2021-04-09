@@ -63,6 +63,8 @@ static GLuint mesh_vbo[2];
 int main(int argc, char* argv[])
 {
     printf("ECSE458 CICMR Simulation\n");
+    //printf("%d %c\n",robot.i,robot.s);
+    //return 0;
 
     GLFWwindow* window;
     GLuint vertex_buffer, normal_buffer, element_buffer, vertex_shader, fragment_shader, program;
@@ -138,7 +140,7 @@ int main(int argc, char* argv[])
     //}
     
 
-    load_obj_model("./models/sphere.obj");
+    load_obj_model("./models/quad.obj");
 //obj_vertices.vertices;
 //obj_elements.i;
 
@@ -164,13 +166,13 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(obj_vertices.vertices)*8*total_vertices, ob
     printf("%d\n",sizeof(grid_elements.i[0])*8*mul);*/
 
 //sizeof(grid_elements.i[0])*
-    for(int i = 0; i < 8*mul; i+=8){
+    /*for(int i = 0; i < 8*mul; i+=8){
         printf("i: %d elements: %d %d %d %d %d %d %d %d\n",i,grid_elements.i[i],grid_elements.i[i+1],grid_elements.i[i+2],grid_elements.i[i+3],grid_elements.i[i+4],grid_elements.i[i+5],grid_elements.i[i+6],grid_elements.i[i+7]);
     }
 
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(grid_elements.i[0])*8*mul,grid_elements.i,GL_STATIC_DRAW); //grid_elements.i[200], GL_STATIC_DRAW);
-    
+    */
     /*int* datae = (int*)malloc(sizeof(grid_elements.i[0])*8*mul);
     glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,sizeof(grid_elements.i[0])*8*mul,datae);
     printf("%d\n\n",sizeof(datae));
@@ -206,7 +208,7 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(obj_vertices.vertices)*8*total_vertices, ob
 glBindBuffer(GL_ARRAY_BUFFER,0);
     }*/
 
-    attrloc = glGetAttribLocation(program, "vPos");
+    /*attrloc = glGetAttribLocation(program, "vPos");
     glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
 //            printf("%f %f %f\n",grid_quads.vertices[196].x,grid_quads.vertices[196].y,grid_quads.vertices[196].z);//&grid_quads.vertices[196]
     printf("ASD %d %d \n",sizeof(grid_quads.vertices)*4*(mul+1),sizeof(grid_quads.vertices));
@@ -215,7 +217,7 @@ glBindBuffer(GL_ARRAY_BUFFER,0);
     printf("%dsss%d\n",sizeof(quad_vertices),size);
     //int size = 48;
     glBufferData(GL_ARRAY_BUFFER, size, grid_quads.vertices, GL_STATIC_DRAW);
-
+*/
 
     /*for(int i = 0; i < 4*(mul+1)*2; i+=4){
         printf("i: %d vertices: %f %f %f %f %f %f %f %f %f %f %f %f\n",i,grid_quads.vertices[i].x,grid_quads.vertices[i].y,grid_quads.vertices[i].z,
@@ -229,7 +231,7 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
     glGetIntegerv(GL_MAX_ELEMENTS_INDICES,&test);
     printf("%d\n",test);*/
 
-    float* data = (float*)calloc(size,sizeof(float));
+   /* float* data = (float*)calloc(size,sizeof(float));
     glGetBufferSubData(GL_ARRAY_BUFFER,0,size,data);
 //        printf("%d\n\n%d",sizeof(data),sizeof(grid_quads.vertices)*4*(mul+1));
 //sizeof(data)*(mul+2)
@@ -254,7 +256,7 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
         //mat4x4_rotate_Y(m, m, (float) glfwGetTime());
         //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
-        vec3 eye = {0,1,-5};
+        vec3 eye = {0,5,-1};
         vec3 center = {0,0,0};
         vec3 up = {0,1,0};
 
@@ -282,7 +284,8 @@ grid_quads.vertices[i+3].x,grid_quads.vertices[i+3].y,grid_quads.vertices[i+3].z
 //old grid
 //glDrawElements(GL_LINES, (mul+1)*8, GL_UNSIGNED_INT, 0);
 // sphere?
-        glDrawElements(GL_TRIANGLES,total_faces,GL_UNSIGNED_INT,(void*)0);
+        //glDrawElements(GL_TRIANGLES,total_faces+10,GL_UNSIGNED_INT,(void*)0);
+        glDrawArrays(GL_TRIANGLE_FAN,0,(total_vertices+1)*8);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

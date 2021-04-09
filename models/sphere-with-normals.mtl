@@ -1,7 +1,7 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'simulation.blend'
 # Material Count: 1
 
-newmtl color_cccccc
+newmtl color_cccccc.005
 Ns 0.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000

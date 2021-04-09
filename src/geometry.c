@@ -372,6 +372,7 @@ struct
 } obj_elements;
 
 int total_vertices = 1;
+int total_normals = 1;
 int total_faces = 1;
 
 // Load .obj model
@@ -405,7 +406,41 @@ void load_obj_model(char* file_path){
 
             // vertex normals            
             if(c == 'n') {
+                obj_normals.normals = (Vector*)realloc(obj_normals.normals,((total_normals)*sizeof(Vector)+sizeof(*obj_normals.normals)));
+                total_normals++;
+                int countn = 1;
+                int n = 0;
+                char* tempn = NULL;
+                while(c != '\n'){    
+                    c = fgetc(objFileHandle);
+                    if(c == ' ' | c == '\n'){
+                        const char* floatvalue = tempn;
+                        float coordinate = atof(floatvalue);
 
+                        switch(n){
+                            case 0:
+                                obj_normals.normals[total_normals-1].x = coordinate;
+                                break;
+                            case 1:
+                                obj_normals.normals[total_normals-1].y = coordinate;
+                                break;
+                            default:
+                            case 2:
+                                obj_normals.normals[total_normals-1].z = coordinate;
+                                break;
+                        }
+                        
+                        free(tempn);
+                        tempn = NULL;
+                        countn = 1;
+                        n++;
+                        printf("%f ",coordinate);
+                    }
+                    tempn = (char*)realloc(tempn, countn);
+                    tempn[countn-1] = c;
+                    countn++;
+                }
+                continue;
             }
 
             // ignore other lines for now.
