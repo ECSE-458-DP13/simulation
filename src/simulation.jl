@@ -11,6 +11,9 @@ const GOAL = (left=(x=40, y=100), right=(x=60, y=100))
 # assume circular robot (cm)
 const ROBOT_RADIUS = 19
 
+# ball radius (cm)
+const BALL_RADIUS = 8
+
 # ~~~~~~~~~~~~~~~
 # declare structs
 # ~~~~~~~~~~~~~~~
@@ -56,8 +59,13 @@ mutable struct Robot
     ΔΔd::USVector # ultrasonic accelerations
 
     # zero-initialize except id
-    function Robot()
-        # TODO
+    function Robot(id::Integer, p::XYVector)
+        v = XYVector(0, 0)
+        a = XYVector(0, 0)
+        d = USVector()
+        Δd = USVector()
+        ΔΔd = USVector()
+        return new(id, p, v, a, 0, 0, 0, d, Δd, ΔΔd)
     end
 end
 
@@ -66,6 +74,10 @@ mutable struct Ball
     p::XYVector # position
     v::XYVector # velocity
     a::XYVector # acceleration
+
+    function Ball(p::XYVector)
+        return new(p, 0, 0)
+    end
 end
 
 # Simulation serves as entry point to updating states
@@ -74,15 +86,19 @@ struct Simulation
     ball::Ball
     Δt::AbstractFloat
 
-    function Simulation(n_robots::Integer, Δt::Float)
-        robots = [Robot(i) for i ∈ 1:n_robots]
-        # TODO
+    function Simulation(n_robots::Integer, start_positions::AbstractVector{XYVector}, Δt::AbstractFloat)
+        robots = [Robot(i, start_positions[i]) for i ∈ 1:n_robots]
+        return new(robots, Ball(XYVector(50, 50)), Δt)
     end
 end
 
 # ~~~~~~~~~~~~~~~~~
 # declare functions
 # ~~~~~~~~~~~~~~~~~
+
+function distance(a::XYVector, b::XYVector)::AbstractFloat
+    return √((a.x - b.x)^2 + (a.y - b.y)^2)
+end
 
 # should trigger a single timestep of the system (probably in another function)
 function send_commands!(sim::Simulation, commands)
