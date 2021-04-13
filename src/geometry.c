@@ -123,15 +123,15 @@ void init_grid(int length, int width){
 
         /*if(i < 10){*/
             //printf("ROW: %d COL: %d\n",i/10,i%10);
-            grid_quads.vertices[4*i+0].x+=(int)(i%10);
-            grid_quads.vertices[4*i+1].x+=(int)(i%10);
-            grid_quads.vertices[4*i+2].x+=(int)(i%10);
-            grid_quads.vertices[4*i+3].x+=(int)(i%10);
+            grid_quads.vertices[4*i+0].x+=(int)(i%width);
+            grid_quads.vertices[4*i+1].x+=(int)(i%width);
+            grid_quads.vertices[4*i+2].x+=(int)(i%width);
+            grid_quads.vertices[4*i+3].x+=(int)(i%width);
 
-            grid_quads.vertices[4*i+0].z-=(int)(i/10);
-            grid_quads.vertices[4*i+1].z-=(int)(i/10);
-            grid_quads.vertices[4*i+2].z-=(int)(i/10);
-            grid_quads.vertices[4*i+3].z-=(int)(i/10);
+            grid_quads.vertices[4*i+0].z-=(int)(i/length);
+            grid_quads.vertices[4*i+1].z-=(int)(i/length);
+            grid_quads.vertices[4*i+2].z-=(int)(i/length);
+            grid_quads.vertices[4*i+3].z-=(int)(i/length);
         /*} else {
             grid_quads.vertices[4*i+0].x+=(i-49)/2;
             grid_quads.vertices[4*i+0].z+=(i-49)/2;

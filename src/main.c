@@ -122,74 +122,27 @@ int main(int argc, char* argv[])
     glUseProgram(program);
 
     mvp_location = glGetUniformLocation(program, "MVP");
-    //vpos_location = glGetAttribLocation(program, "vPos");
+    vpos_location = glGetAttribLocation(program, "vPos");
     vcol_location = glGetAttribLocation(program, "vCol");
-
-    init_grid(10,10);
-
-    GLuint attrloc;
 
     glGenVertexArrays(1, &mesh);
     glGenBuffers(2, mesh_vbo);
     glBindVertexArray(mesh);
 
-    /* Prepare the data for drawing through a buffer inidices */
-    //for(int i = 100; i < 200; i++){
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[i]);
-        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_elements), quad_elements, GL_STATIC_DRAW);
-    //}
-    
+    int rows = 3;
+    int columns = 3;
+    init_grid(rows,columns);
 
-    /*load_obj_model("./models/quad.obj");
-//obj_vertices.vertices;
-//obj_elements.i;
-
-
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
-    printf("%d %d\n",total_faces,total_vertices);
-glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(obj_elements.i[0])*8*total_faces,obj_elements.i,GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
-glBufferData(GL_ARRAY_BUFFER, sizeof(obj_vertices.vertices)*8*total_vertices, obj_vertices.vertices, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(attrloc);
-    glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
     //glBindBuffer(GL_ARRAY_BUFFER,0);
-
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);*/
-
-attrloc = glGetAttribLocation(program, "vPos");
-
-glBindBuffer(GL_ARRAY_BUFFER,0);
-
-    int mul = 100;
-    /*printf("aa%d\n",sizeof(quad_elements));
-    printf("%d\n",sizeof(grid_elements.i[0]));
-    printf("%d\n",sizeof(grid_elements.i));
-    printf("%d\n",sizeof(grid_elements));
-    printf("%d\n",sizeof(grid_elements.i[0])*8*mul);*/
-
-//sizeof(grid_elements.i[0])*
-    for(int i = 0; i < 8*mul; i+=8){
-        printf("i: %d elements: %d %d %d %d %d %d %d %d\n",i,grid_elements.i[i],grid_elements.i[i+1],grid_elements.i[i+2],grid_elements.i[i+3],grid_elements.i[i+4],grid_elements.i[i+5],grid_elements.i[i+6],grid_elements.i[i+7]);
-    }
-
-glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(grid_elements.i[0])*8*mul,grid_elements.i,GL_STATIC_DRAW); //grid_elements.i[200], GL_STATIC_DRAW);
-
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(grid_elements.i[0])*8*rows*columns,grid_elements.i,GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, mesh_vbo[0]);
-//            printf("%f %f %f\n",grid_quads.vertices[196].x,grid_quads.vertices[196].y,grid_quads.vertices[196].z);//&grid_quads.vertices[196]
-    printf("ASD %d %d \n",sizeof(grid_quads.vertices)*4*(mul+1),sizeof(grid_quads.vertices));
-    //printf("%d\n",sizeof(quad_vertices.vertices));
-    int size = sizeof(grid_quads.vertices)*8*(mul+1);
-    printf("%dsss%d\n",sizeof(quad_vertices),size);
-    //int size = 48;
-    glBufferData(GL_ARRAY_BUFFER, size, grid_quads.vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(grid_quads.vertices)*8*rows*columns, grid_quads.vertices, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(attrloc);
-        glVertexAttribPointer(attrloc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-//glBindBuffer(GL_ARRAY_BUFFER,0);
+    glEnableVertexAttribArray(vpos_location);
+    glVertexAttribPointer(vpos_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    //glBindBuffer(GL_ARRAY_BUFFER,0);
 
 
     while (!glfwWindowShouldClose(window))
@@ -235,7 +188,7 @@ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh_vbo[1]);
 //        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, (void*)0);
         
 //old grid
-glDrawElements(GL_LINES, (mul+1)*8, GL_UNSIGNED_INT, 0);
+glDrawElements(GL_LINES, (rows*columns)*8, GL_UNSIGNED_INT, 0);
 // sphere?
         //glDrawElements(GL_TRIANGLES,total_faces+10,GL_UNSIGNED_INT,(void*)0);
         //glDrawArrays(GL_TRIANGLE_FAN,0,(total_vertices+1)*8);
