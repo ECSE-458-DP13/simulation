@@ -1,3 +1,0 @@
-cp ./libs/glfw-3.3.2/src/libglfw* .;
-gcc -o simulation ./src/*.c -I./include -I./libs/glfw-3.3.2/deps -I./libs/glfw-3.3.2/include/ -L./libs/glfw-3.3.2/src -lglfw -lm ./libs/glfw-3.3.2/deps/glad_gl.c -Wl,-rpath=./ -g
-
