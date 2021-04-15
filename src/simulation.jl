@@ -1,19 +1,3 @@
-# ~~~~~~~~~~~~~~~~~
-# declare constants
-# ~~~~~~~~~~~~~~~~~
-
-# arena size (cm)
-const ARENA = (x=100, y=100)
-
-# goal-line coordinates
-const GOAL = (left=(x=40, y=100), right=(x=60, y=100))
-
-# assume circular robot (cm)
-const ROBOT_RADIUS = 19
-
-# ball radius (cm)
-const BALL_RADIUS = 8
-
 # ~~~~~~~~~~~~~~~
 # declare structs
 # ~~~~~~~~~~~~~~~
@@ -92,6 +76,33 @@ struct Simulation
     end
 end
 
+# ~~~~~~~~~~~~
+# declare enum
+# ~~~~~~~~~~~~
+
+@enum COMMANDS begin
+    GO_FORWARD = 1
+    TURN_LEFT = 2
+    TURN_RIGHT = 3
+    GO_BACKWARD = 4
+end
+
+# ~~~~~~~~~~~~~~~~~
+# declare constants
+# ~~~~~~~~~~~~~~~~~
+
+# arena size (cm)
+const ARENA = (x=100, y=100)
+
+# goal-line coordinates
+const GOAL = (left=XYVector(40, 100), right=XYVector(60, 100))
+
+# assume circular robot (cm)
+const ROBOT_RADIUS = 19
+
+# ball radius (cm)
+const BALL_RADIUS = 8
+
 # ~~~~~~~~~~~~~~~~~
 # declare functions
 # ~~~~~~~~~~~~~~~~~
@@ -101,7 +112,7 @@ function distance(a::XYVector, b::XYVector)::AbstractFloat
 end
 
 # should trigger a single timestep of the system (probably in another function)
-function send_commands!(sim::Simulation, commands)
+function send_commands!(sim::Simulation, commands::COMMANDS)
     # TODO
 end
 
