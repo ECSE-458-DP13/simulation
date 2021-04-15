@@ -111,9 +111,14 @@ function distance(a::XYVector, b::XYVector)::AbstractFloat
     return √((a.x - b.x)^2 + (a.y - b.y)^2)
 end
 
-# should trigger a single timestep of the system (probably in another function)
-function send_commands!(sim::Simulation, commands::COMMANDS)
+function update_robot!(robot::Robot, sim::Simulation, command::COMMANDS)
     # TODO
+end
+
+# should trigger a single timestep of the system (probably in another function)
+function send_commands!(sim::Simulation, commands::Dict{Integer,COMMANDS})
+    # TODO
+    # update every robot
 end
 
 # should compile all the key signal data into one data structure
